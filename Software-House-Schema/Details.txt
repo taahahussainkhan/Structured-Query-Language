@@ -1,0 +1,58 @@
+Entities
+
+Software House
+Name
+Address
+Phone Number
+Website
+Email Address
+Employees
+Clients
+Projects
+Employee
+Name
+Title
+Department
+Email Address
+Phone Number
+Address
+Client
+Name
+Address
+Phone Number
+Email Address
+Project
+Name
+Start Date
+End Date
+Budget
+Status
+Notes
+Attributes
+
+Name
+A unique identifier for the entity.
+Address
+The physical location of the entity.
+Phone Number
+A contact number for the entity.
+Website
+The website address for the entity.
+Email Address
+The email address for the entity.
+Employees
+A list of employees who work for the software house.
+Clients
+A list of clients who have worked with the software house.
+Projects
+A list of projects that the software house has worked on.
+Start Date
+The date that the project started.
+End Date
+The date that the project is expected to end.
+Budget
+The total amount of money that has been budgeted for the project.
+Status
+The current status of the project (e.g., in progress, completed, cancelled).
+Notes
+Any additional notes about the project.

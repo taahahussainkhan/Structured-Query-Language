@@ -31,7 +31,6 @@ CREATE TABLE Project (
   Description VARCHAR(255) NOT NULL,
   StartDate DATE NOT NULL,
   EndDate DATE NOT NULL,
-  ClientID INT NOT NULL,
   PRIMARY KEY (ProjectID)
 );
 
@@ -40,8 +39,6 @@ CREATE TABLE Task (
   Description VARCHAR(255) NOT NULL,
   StartDate DATE NOT NULL,
   EndDate DATE NOT NULL,
-  ProjectID INT NOT NULL,
-  EmployeeID INT NOT NULL,
   PRIMARY KEY (TaskID)
 );
 
@@ -51,70 +48,74 @@ CREATE TABLE Service (
   Description VARCHAR(255) NOT NULL,
   PRIMARY KEY (ServiceID)
 );
-
+DROP Table contract;
 CREATE TABLE Contract (
   ContractID INT NOT NULL ,
-  ServiceID INT NOT NULL,
-  ClientID INT NOT NULL,
-  EmployeeID INT NOT NULL,
   StartDate DATE NOT NULL,
   EndDate DATE NOT NULL,
   TermsAndConditions VARCHAR(255) NOT NULL,
   PRIMARY KEY (ContractID)
 );
-
+drop table payment;
 CREATE TABLE Payment (
   PaymentID INT NOT NULL ,
-  ContractID INT NOT NULL,
   Amount INT NOT NULL,
   PaymentDate DATE NOT NULL,
   PRIMARY KEY (PaymentID)
 );
-
+desc payment;
 #-----------------------------------------% Adding Foreign Keys %
 
 ALTER TABLE Project
-ADD CONSTRAINT FK_Project_ClientID
-FOREIGN KEY (ClientID) REFERENCES Client (ClientID)
+ADD ClientID INT,
+ADD FOREIGN KEY (ClientID) 
+REFERENCES Client (ClientID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+
+ALTER TABLE Task
+ADD ProjectID INT,
+ADD FOREIGN KEY (ProjectID) 
+REFERENCES Project (ProjectID)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 ALTER TABLE Task
-ADD CONSTRAINT FK_Task_ProjectID
-FOREIGN KEY (ProjectID) REFERENCES Project (ProjectID)
-ON DELETE CASCADE
-ON UPDATE CASCADE;
-
-ALTER TABLE Task
-ADD CONSTRAINT FK_Task_EmployeeID
-FOREIGN KEY (EmployeeID) REFERENCES Employee (EmployeeID)
+ADD EmployeeID INT,
+ADD FOREIGN KEY (EmployeeID) 
+REFERENCES Employee (EmployeeID)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 ALTER TABLE Contract
-ADD CONSTRAINT FK_Contract_ServiceID
-FOREIGN KEY (ServiceID) REFERENCES Service (ServiceID)
+ADD ServiceID INT,
+ADD FOREIGN KEY (ServiceID) 
+REFERENCES Service (ServiceID)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 ALTER TABLE Contract
-ADD CONSTRAINT FK_Contract_ClientID
-FOREIGN KEY (ClientID) REFERENCES Client (ClientID)
+ADD ClientID INT,
+ADD FOREIGN KEY (ClientID) 
+REFERENCES Client (ClientID)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 ALTER TABLE Contract
-ADD CONSTRAINT FK_Contract_EmployeeID
-FOREIGN KEY (EmployeeID) REFERENCES Employee (EmployeeID)
+ADD EmployeeID INT,
+ADD FOREIGN KEY (EmployeeID) 
+REFERENCES Employee (EmployeeID)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 ALTER TABLE Payment
-ADD CONSTRAINT FK_Payment_ContractID
-FOREIGN KEY (ContractID) REFERENCES Contract (ContractID)
+ADD ContractID INT,
+ADD FOREIGN KEY (ContractID) 
+REFERENCES Contract (ContractID)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
-
+desc payment;
 #-----------------------------------------% Inserting Data %
 
 # Client
@@ -236,36 +237,60 @@ SELECT * FROM Payment;
 UPDATE Client 
 SET FirstName = 'James' 
 WHERE ClientID = 1;
+
+UPDATE Client 
+SET Phone = '545-545-1216' 
+WHERE ClientID = 5;
+
 UPDATE Client 
 SET Address = '781 Oak Street' 
 WHERE ClientID = 2;
+
 UPDATE Client 
 SET Phone = '555-555-1314' 
 WHERE ClientID = 3;
 
+UPDATE Client 
+SET FirstName = 'Jack' 
+WHERE ClientID = 7;
+
+SELECT * FROM client;
 # Employee
 
 # Update the employee's name.
+
 UPDATE Employee
 SET FirstName = 'John',
 LastName = 'Doe'
 WHERE EmployeeID = 1;
 
-# Update the employee's department.
 UPDATE Employee
-SET Address = '21 Brookfield St'
+SET Salary = 200500
 WHERE EmployeeID = 2;
 
-# Update the employee's salary.
+UPDATE Employee
+SET Address = '21 Brookfield St'
+WHERE EmployeeID = 8;
+
 UPDATE Employee
 SET Salary = 100000
 WHERE EmployeeID = 3;
+
+UPDATE Employee
+SET LastName = 'David'
+WHERE EmployeeID = 4;
+
+SELECT * FROM Employee;
 
 #Project
 
 UPDATE Project
 SET Title = "Inventory Management System"
 WHERE ProjectID = 1;
+
+UPDATE Project
+SET StartDate = "2010-04-01"
+WHERE ProjectID = 8;
 
 UPDATE Project
 SET Description = "Only Build a new website to promote products and services."
@@ -275,11 +300,19 @@ UPDATE Project
 SET StartDate = "2023-06-01"
 WHERE ProjectID = 3;
 
+UPDATE Project
+SET Title = "Inventory Management System"
+WHERE ProjectID = 9;
+SELECT * FROM Project;
 # Task
 
 UPDATE task
 SET EndDate = "2023-12-01"
 WHERE TaskID = 8;
+
+UPDATE task
+SET EndDate = "2019-02-03"
+WHERE TaskID = 5;
 
 UPDATE task
 SET Description = "Developing backend."
@@ -289,7 +322,10 @@ UPDATE task
 SET EndDate = "2023-09-01"
 WHERE TaskID = 3;
 
-
+UPDATE task
+SET Description = "Testing"
+WHERE TaskID = 7;
+SELECT * FROM task;
 # Service
 
 UPDATE Service 
@@ -304,6 +340,14 @@ UPDATE Service
 SET Name = 'Cyber Security'
 WHERE ServiceID = 7;
 
+UPDATE Service 
+SET Name = 'Testing'
+WHERE ServiceID = 3;
+
+UPDATE Service 
+SET Name = 'Software Developement Service' 
+WHERE ServiceID = 6;
+SELECT * FROM service;
 # Contract
 
 UPDATE Contract
@@ -318,6 +362,14 @@ UPDATE Contract
 SET EmployeeID = 2
 WHERE ClientID = 2;
 
+UPDATE Contract
+SET EndDate = '2023-03-01'
+WHERE ContractID = 3;
+
+UPDATE Contract
+SET EndDate = '2023-03-01'
+WHERE ServiceID = 3;
+SELECT * FROM Contract;
 # Payment
 
 UPDATE Payment
@@ -332,5 +384,12 @@ UPDATE Payment
 SET PaymentDate = '2023-06-01'
 WHERE Amount > 5000;
 
+UPDATE Payment
+SET PaymentDate = '2022-08-01'
+WHERE Amount < 8000;
 
+UPDATE Payment
+SET Amount = 22000
+WHERE ContractID = 8;
 
+SELECT * FROM Payment;

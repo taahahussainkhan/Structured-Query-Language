@@ -48,7 +48,7 @@ CREATE TABLE Service (
   Description VARCHAR(255) NOT NULL,
   PRIMARY KEY (ServiceID)
 );
-DROP Table contract;
+
 CREATE TABLE Contract (
   ContractID INT NOT NULL ,
   StartDate DATE NOT NULL,
@@ -56,14 +56,14 @@ CREATE TABLE Contract (
   TermsAndConditions VARCHAR(255) NOT NULL,
   PRIMARY KEY (ContractID)
 );
-drop table payment;
+
 CREATE TABLE Payment (
   PaymentID INT NOT NULL ,
   Amount INT NOT NULL,
   PaymentDate DATE NOT NULL,
   PRIMARY KEY (PaymentID)
 );
-desc payment;
+
 #-----------------------------------------% Adding Foreign Keys %
 
 ALTER TABLE Project
@@ -115,7 +115,7 @@ ADD FOREIGN KEY (ContractID)
 REFERENCES Contract (ContractID)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
-desc payment;
+
 #-----------------------------------------% Inserting Data %
 
 # Client
@@ -132,7 +132,7 @@ VALUES
 (9, 'Thomas', 'Gray', 'thomasgray@gmail.com', '345-678-9012', '789 Oak Street'),
 (10, 'Nancy', 'Pink', 'nancypink@gmail.com', '678-901-2345', '101 Maple Street');
 
-SELECT * FROM CLIENT;
+
 
 # Employee
 
@@ -148,7 +148,7 @@ VALUES (1, "John", "Doe", "johndoe@example.com", "555-555-1212", "21 Oslo St", "
        (9,"Bill","Miller","billmiller@example.com","555.555.1212","139 Main St","2012/08/01","50000"),
        (10,"Karen","Taylor","karentaylor@example.com","555.555.1212","256 Victoria St","2020/05/01","20000");
        
-SELECT * FROM Employee;
+
 
 # Project
 
@@ -164,8 +164,6 @@ INSERT INTO Project (ProjectID, Title, Description, StartDate, EndDate, ClientID
 (9, 'Management', 'Manage a project to develop new software application.', '2023-09-01', '2023-11-01', 9),
 (10, 'Website', 'Deliver a project on time and within budget to develop new website.', '2023-10-01', '2023-12-01', 10);
 
-SELECT * FROM Project;
-
 # Task 
 
 INSERT INTO Task (TaskID, Description, StartDate, EndDate, ProjectID, EmployeeID) VALUES
@@ -179,8 +177,6 @@ INSERT INTO Task (TaskID, Description, StartDate, EndDate, ProjectID, EmployeeID
 (8, 'Fix bugs.', '2023-08-01', '2023-10-01', 1, 8),
 (9, 'Release the application.', '2023-09-01', '2023-11-01', 1, 9),
 (10, 'Provide support to users.', '2023-10-01', '2023-12-01', 1, 10);
-
-SELECT * FROM Task;
 
 # Service
 
@@ -196,7 +192,6 @@ INSERT INTO Service (ServiceID, Name, Description) VALUES
 (9, 'Data Analytics', 'We help you make sense of your data so you can make better business decisions.'),
 (10, 'Mobile App Development', 'We develop mobile apps that will help you reach your target audience on their mobile devices.');
 
-SELECT * FROM Service;
 
 # Contract
 
@@ -212,7 +207,6 @@ INSERT INTO Contract (ContractID, ServiceID, ClientID, EmployeeID, StartDate, En
 (9, 9, 9, 9, '2023-09-01', '2023-11-01', 'This is the contract terms and conditions for Management.'),
 (10, 10, 10, 10, '2023-10-01', '2023-12-01', 'This is the contract terms and conditions for Website.');
 
-SELECT * FROM Contract;
 
 # Payment
 
@@ -228,7 +222,6 @@ INSERT INTO Payment (PaymentID, ContractID, Amount, PaymentDate) VALUES
 (9, 9, 9000, '2023-09-01'),
 (10, 10, 10000, '2023-10-01');
 
-SELECT * FROM Payment;
 
 #-----------------------------------------% Updation %
 
@@ -254,7 +247,6 @@ UPDATE Client
 SET FirstName = 'Jack' 
 WHERE ClientID = 7;
 
-SELECT * FROM client;
 # Employee
 
 # Update the employee's name.
@@ -280,7 +272,6 @@ UPDATE Employee
 SET LastName = 'David'
 WHERE EmployeeID = 4;
 
-SELECT * FROM Employee;
 
 #Project
 
@@ -303,7 +294,7 @@ WHERE ProjectID = 3;
 UPDATE Project
 SET Title = "Inventory Management System"
 WHERE ProjectID = 9;
-SELECT * FROM Project;
+
 # Task
 
 UPDATE task
@@ -325,7 +316,7 @@ WHERE TaskID = 3;
 UPDATE task
 SET Description = "Testing"
 WHERE TaskID = 7;
-SELECT * FROM task;
+
 # Service
 
 UPDATE Service 
@@ -347,7 +338,7 @@ WHERE ServiceID = 3;
 UPDATE Service 
 SET Name = 'Software Developement Service' 
 WHERE ServiceID = 6;
-SELECT * FROM service;
+
 # Contract
 
 UPDATE Contract
@@ -369,7 +360,7 @@ WHERE ContractID = 3;
 UPDATE Contract
 SET EndDate = '2023-03-01'
 WHERE ServiceID = 3;
-SELECT * FROM Contract;
+
 # Payment
 
 UPDATE Payment
@@ -392,4 +383,318 @@ UPDATE Payment
 SET Amount = 22000
 WHERE ContractID = 8;
 
-SELECT * FROM Payment;
+
+
+#-----------------------------------------% SELECT %
+
+SELECT * FROM Employee WHERE HireDate > '2022-01-01';
+
+SELECT Title, StartDate FROM Project;
+
+SELECT * FROM Employee WHERE Salary > 50000;
+
+
+
+SELECT * FROM Client WHERE Email LIKE '%@gmail.com';
+
+
+SELECT * FROM Employee WHERE Salary < 50000;
+
+
+#-----------------------------------------% JOINS %
+
+SELECT Task.*, Project.*, Client.*, Employee.*
+FROM Task
+JOIN Project ON Task.ProjectID = Project.ProjectID
+JOIN Client ON Project.ClientID = Client.ClientID
+JOIN Employee ON Task.EmployeeID = Employee.EmployeeID;
+
+
+SELECT Client.*, Project.*
+FROM Client
+JOIN Project ON Client.ClientID = Project.ClientID;
+
+
+SELECT Task.*, Project.*, Employee.*
+FROM Task
+INNER JOIN Project ON Task.ProjectID = Project.ProjectID
+INNER JOIN Employee ON Task.EmployeeID = Employee.EmployeeID;
+
+
+
+SELECT 
+Client.*, Project.*
+FROM Client
+LEFT JOIN Project 
+ON Client.ClientID = Project.ClientID;
+
+
+SELECT 
+Client.*, Project.*
+FROM Client
+RIGHT JOIN Project 
+ON Client.ClientID = Project.ClientID;
+
+#-----------------------------------------% CASES %
+
+SELECT
+  Title,
+  CASE
+    WHEN EndDate > CURDATE() THEN 'Active'
+    ELSE 'Completed'
+  END AS Status
+FROM Project;
+
+SELECT
+  CONCAT(FirstName, ' ', LastName) AS FullName,
+  CASE
+    WHEN Phone <> '' THEN 'Individual'
+    WHEN Email <> '' THEN 'Company'
+    ELSE 'Unknown'
+  END AS Category
+FROM Client;
+
+
+SELECT
+  Description,
+  CASE
+    WHEN DATEDIFF(EndDate, CURDATE()) <= 3 THEN 'Urgent'
+    ELSE 'Normal'
+  END AS Priority
+FROM Task;
+
+
+SELECT
+  CONCAT(FirstName, ' ', LastName) AS FullName,
+  CASE
+    WHEN YEAR(HireDate) < 2020 THEN 'Senior'
+    ELSE 'Junior'
+  END AS ExperienceLevel
+FROM Employee;
+
+
+SELECT
+  Title,
+  CASE
+    WHEN (SELECT COUNT(*) FROM Task WHERE Task.ProjectID = Project.ProjectID) > 5 THEN 'High'
+    ELSE 'Low'
+  END AS TaskComplexity
+FROM Project;
+
+#-----------------------------------------% VIEWS %
+
+
+
+CREATE VIEW ActiveContracts AS
+SELECT 
+c.ContractID, 
+c.StartDate, 
+c.EndDate, 
+cl.FirstName AS ClientFirstName, 
+cl.LastName AS ClientLastName, 
+e.FirstName AS EmployeeFirstName, 
+e.LastName AS EmployeeLastName
+FROM Contract c
+JOIN Client cl 
+ON c.ClientID = cl.ClientID
+JOIN Employee e 
+ON c.EmployeeID = e.EmployeeID
+WHERE c.EndDate > CURDATE();
+SELECT * FROM ActiveContracts;
+
+
+CREATE VIEW ProjectDetails AS
+SELECT ProjectID, Title, StartDate, EndDate
+FROM Project;
+SELECT * FROM ProjectDetails;
+
+
+CREATE VIEW EmployeeTasks AS
+SELECT e.EmployeeID, 
+e.FirstName, 
+e.LastName, e.Email, 
+e.Phone, 
+e.Address, 
+t.TaskID, 
+t.Description, 
+t.StartDate, 
+t.EndDate
+FROM Employee e
+JOIN Task t 
+ON e.EmployeeID = t.EmployeeID;
+SELECT * FROM EmployeeTasks;
+
+
+
+CREATE VIEW PaymentDetails AS
+SELECT PaymentID, Amount, PaymentDate
+FROM Payment;
+SELECT * FROM PaymentDetails;
+
+CREATE VIEW ContractTerms AS
+SELECT ContractID, StartDate, EndDate, TermsAndConditions
+FROM Contract;
+SELECT * FROM ContractTerms;
+
+
+#-----------------------------------------% PROCEDURES %
+
+DELIMITER //
+CREATE PROCEDURE InsertClient (
+    IN clientID INT,
+    IN firstName VARCHAR(255),
+    IN lastName VARCHAR(255),
+    IN email VARCHAR(255),
+    IN phone VARCHAR(255),
+    IN address VARCHAR(255)
+)
+BEGIN
+    INSERT INTO Client (ClientID, FirstName, LastName, Email, Phone, Address)
+    VALUES (clientID, firstName, lastName, email, phone, address);
+END //
+DELIMITER ;
+CALL InsertClient(12, 'John', 'Doe', 'johndoe@example.com', '1234567890', '123 Main St');
+SELECT * FROM CLIENT;
+
+
+
+DELIMITER //
+CREATE PROCEDURE GetEmployeeTasks (
+    IN employeeID INT
+)
+BEGIN
+    SELECT TaskID, Description, StartDate, EndDate
+    FROM Task
+    WHERE EmployeeID = employeeID;
+END //
+DELIMITER ;
+
+CALL GetEmployeeTasks(123);
+
+
+DELIMITER //
+CREATE PROCEDURE GetTaskByID (
+    IN taskID INT
+)
+BEGIN
+    SELECT *
+    FROM Task
+    WHERE TaskID = taskID;
+END //
+DELIMITER ;
+CALL GetTaskByID(1);
+
+
+
+DELIMITER //
+CREATE PROCEDURE InsertProject (
+    IN projectID INT,
+    IN title VARCHAR(255),
+    IN description VARCHAR(255),
+    IN startDate DATE,
+    IN endDate DATE
+)
+BEGIN
+    INSERT INTO Project (ProjectID, Title, Description, StartDate, EndDate)
+    VALUES (projectID, title, description, startDate, endDate);
+END //
+DELIMITER ;
+CALL InsertProject(16, 'New Project', 'This is a new project', '2023-01-01', '2023-12-31');
+SELECT * FROM PROJECT;
+
+
+
+DELIMITER //
+CREATE PROCEDURE InsertService (
+    IN name VARCHAR(255),
+    IN description VARCHAR(255)
+)
+BEGIN
+    INSERT INTO Service (Name, Description)
+    VALUES (name, description);
+END //
+DELIMITER ;
+
+CALL InsertService('Web Development', 'Creating and maintaining websites');
+SELECT * FROM SERVICE;
+
+#-----------------------------------------% AGGREGATE FUNCTIONS %
+
+SELECT SUM(Amount) AS TotalRevenue
+FROM Payment;
+
+
+SELECT AVG(DATEDIFF(EndDate, StartDate)) AS AverageTaskDuration
+FROM Task;
+
+SELECT MIN(StartDate) AS MinProjectStartDate
+FROM Project;
+
+SELECT COUNT(*) AS ActiveContracts
+FROM Contract
+WHERE EndDate > CURDATE();
+
+SELECT YEAR(StartDate) AS Year, COUNT(*) AS TotalProjects
+FROM Project
+GROUP BY YEAR(StartDate);
+
+
+SELECT YEAR(StartDate) AS Year, COUNT(*) AS TotalProjects
+FROM Project
+GROUP BY YEAR(StartDate);
+
+
+
+#-----------------------------% CO-RELATED QUERIES %
+
+SELECT ClientID, FirstName, LastName
+FROM Client
+WHERE ClientID IN (
+    SELECT DISTINCT ClientID
+    FROM Project
+);
+
+
+SELECT p.ProjectID, p.Title, (
+    SELECT AVG(e.Salary) FROM Employee e WHERE e.EmployeeID = t.EmployeeID
+) AS AverageSalary
+FROM Project p
+INNER JOIN Task t ON p.ProjectID = t.ProjectID;
+
+
+SELECT s.ServiceID, s.Name, s.Description
+FROM Service s
+WHERE NOT EXISTS (
+    SELECT * FROM Contract c WHERE c.ServiceID = s.ServiceID
+);
+
+
+SELECT c.ContractID, c.StartDate, c.EndDate, (
+    SELECT SUM(p.Amount) FROM Payment AS p WHERE p.ContractID = c.ContractID
+) AS TotalAmountPaid
+FROM Contract AS c;
+
+
+
+SELECT e.FirstName, e.LastName
+FROM Employee AS e
+WHERE (
+    SELECT COUNT(DISTINCT t.ProjectID) FROM Task AS t WHERE t.EmployeeID = e.EmployeeID
+) > 1;
+
+#-----------------------------% NESTED QUERIES %
+
+
+SELECT *
+FROM Project
+WHERE ProjectID IN (
+  SELECT ContractID
+  FROM Payment
+  WHERE Amount > 5000
+);
+
+
+
+
+
+
